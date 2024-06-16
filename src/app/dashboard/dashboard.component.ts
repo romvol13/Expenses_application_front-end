@@ -1,12 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Expense } from '../model/expense';
 import { CategoryService } from '../services/category-service/category.service';
 import { PersonDetailsService } from '../services/person-details-service/person-details.service';
 import { ExpenseService } from '../services/expense-service/expense.service';
 import { NgForm } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { ChangeDetectorRef } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,7 +12,6 @@ import { forkJoin } from 'rxjs';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-
   expenses: Expense[] = [];
   categories: string[] = [];
   selectedCategory: string = '';
@@ -27,8 +24,8 @@ export class DashboardComponent implements OnInit {
 
   chartOptions: any = {
     title: {
-        text: "Monthly expenses",
-        fontFamily: 'Roboto, sans-serif'
+      text: "Monthly expenses",
+      fontFamily: 'Roboto, sans-serif'
     },
     animationEnabled: true,
     axisY: {
@@ -52,6 +49,10 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.initializeDashboard();
+  }
+
+  initializeDashboard(): void {
     this.getCategories();
     this.getCurrentMonthName();
     this.currentDate = new Date().toISOString().split('T')[0];
@@ -91,6 +92,7 @@ export class DashboardComponent implements OnInit {
             this.totalMonthlyExpenses = parseFloat(response.total.toFixed(2));
             this.updateChartData();
           },
+          error => console.error('Error fetching total expenses:', error)
         );
     } else {
       this.handleNoLoggedPerson();
@@ -118,10 +120,7 @@ export class DashboardComponent implements OnInit {
           () => {
             this.handleSuccess(newExpenseForm);
             this.getCurrentMonthTotalExpenses();
-
-            if (this.isCurrentMonthExpense(newExpense.date)) {
-              this.updateChartData();
-            }
+            this.updateChartData();
           },
           error => this.handleError(error)
         );
@@ -169,7 +168,6 @@ export class DashboardComponent implements OnInit {
   }
 
   updateChartData(): void {
-    this.dataPoints = [];
     const loggedPerson = this.getLoggedPersonDetails();
     if (!loggedPerson) {
       console.log('Logged-in person details not available.');
@@ -182,14 +180,16 @@ export class DashboardComponent implements OnInit {
 
     forkJoin(observables).subscribe(
       (expensesArrays: Expense[][]) => {
-        expensesArrays.forEach((expenses: Expense[], index: number) => {
+        this.dataPoints = expensesArrays.map((expenses: Expense[], index: number) => {
           const currentMonthExpenses = expenses.filter(expense => this.isCurrentMonthExpense(expense.date));
           const totalExpense = currentMonthExpenses.reduce((total, expense) => total + expense.price, 0);
-          if (totalExpense > 0) {
-            this.dataPoints.push({ label: this.categories[index], y: parseFloat(totalExpense.toFixed(2)) });
-          }
-        });
+          return {
+            label: this.categories[index],
+            y: parseFloat(totalExpense.toFixed(2))
+          };
+        }).filter(dataPoint => dataPoint.y > 0);
 
+        this.dataPoints.sort((a, b) => a.y - b.y);
         this.updateChartOptions();
       },
       error => console.error('Error updating chart data:', error)
