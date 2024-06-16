@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+.container {
+    display: flex;
+    height: 100%;
+}
+
+.left-panel {
+    font-family: 'Roboto', sans-serif;
+    margin-top: 10px;
+    margin-right: 10px;
+    width: 40%;
+    height: 65%;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    display: flex;
+    /* Make the panel a flex container */
+    flex-direction: column;
+    /* Stack elements vertically */
+}
+
+.right-panel {
+    font-family: 'Roboto', sans-serif;
+    margin-top: 10px;
+    margin-right: 10px;
+    width: 60%;
+    height: 80%;
+    display: flex;
+    /* Make the panel a flex container */
+    flex-direction: column;
+    /* Stack elements vertically */
+}
+
+.top {
+    font-family: 'Roboto', sans-serif;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bottom {
+    margin-top: 10px;
+    min-height: 80%;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    flex-grow: 1;
+    /* Allow the bottom panel to grow and fill remaining space */
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        /* Stack elements vertically */
+    }
+
+    .left-panel,
+    .right-panel {
+        width: 100%;
+        /* Set both panels to full width */
+    }
+}
+
+.form-group {
+    font-family: 'Roboto', sans-serif;
+    margin: 10px;
+}
+
+.table-container {
+    margin: auto;
+    /* This centers the table horizontally */
+}
+
+.top {
+    text-align: center;
+    font-size: 30px;
+}
+
+.top #totalExpenses {
+    font-family: 'Roboto', sans-serif;
+    font-size: 30px;
+}
+
+.button-container {
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    /* Center the button horizontally */
+    margin-bottom: 20px;
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+  

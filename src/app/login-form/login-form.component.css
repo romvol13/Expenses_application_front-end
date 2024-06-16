@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+.animated-header {
+  margin-top: 10px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 2rem;
+  font-weight: 300; /* Use the font weight 300 for light */
+  color: #303030;
+  animation: fadeIn 2s ease-in-out, slideIn 2s ease-in-out;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3);
+  padding: 10px;
+  display: inline-block;
+  border-radius: 20px;
+}
+
+.login-form {
+  font-family: 'Roboto', sans-serif;
+  padding: 20px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+}   
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); }
+  to { transform: translateY(0); }
+}
