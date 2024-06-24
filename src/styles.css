@@ -1,7 +1,6 @@
- 
-  body {
-    background: url('/assets/img/background.avif');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-  }
+body {
+  background: url('/assets/img/background.avif');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}

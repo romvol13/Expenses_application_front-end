@@ -1,18 +1,21 @@
 <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
-        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-            <a class="nav-item nav-link active" href="#"><i class="fas fa-tachometer-alt"></i> Dashboard <span
-                    class="sr-only">(current)</span></a>
-            <!-- <a class="nav-item nav-link" href="#"><i class="fas fa-chart-line"></i> Statistics</a> -->
-        </div>
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" routerLink="/dashboard" routerLinkActive="active">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+        <a class="nav-item nav-link" routerLink="/expenses-list" routerLinkActive="active">
+          <i class="fas fa-chart-line"></i> Expenses List
+        </a>
+      </div>
     </div>
     <div class="navbar-text ml-auto">
-        <i class="fas fa-user"></i> Hi, {{ loggedPerson?.name }}!
-        <i class="fas fa-sign-out-alt" (click)="logOff()" style="cursor: pointer; margin-left: 10px;"
-            title="Log off"></i>
+      <i class="fas fa-user"></i> Hi, {{ loggedPerson?.name }}!
+      <i class="fas fa-sign-out-alt" (click)="logOff()" style="cursor: pointer; margin-left: 10px;" title="Log off"></i>
     </div>
-</nav>
+  </nav>
+  

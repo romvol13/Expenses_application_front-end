@@ -10,12 +10,15 @@ import { FooterComponent } from './footer/footer.component';
 const routes: Routes = [
   { path: "login", component: LoginFormComponent },
   {
-    path: "dashboard", component: DashboardComponent, canActivate: [AuthValidationService], canActivateChild: [AuthValidationService], children: [
-      { path: "navbar", component: NavbarComponent },
-      { path: "footer", component: FooterComponent, canActivateChild: [AuthValidationService] }
-    ]
+    path: "dashboard",
+    component: DashboardComponent,
+    canActivate: [AuthValidationService]
   },
-  { path: "expenses-list", component: ExpensesListComponent },
+  {
+    path: "expenses-list",
+    component: ExpensesListComponent,
+    canActivate: [AuthValidationService]
+  },
   { path: "", redirectTo: "login", pathMatch: "full" }
 ];
 

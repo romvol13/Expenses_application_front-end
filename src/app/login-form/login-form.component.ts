@@ -18,8 +18,8 @@ export class LoginFormComponent {
   tokenStringValue: string = "";
   successMessage: string | null = null;
   errorMessage: string | null = null;
-  url: string = "http://3.79.98.250"
-  //url: string = "http://localhost:8080"
+  //url: string = "http://3.79.98.250"
+  url: string = "http://localhost:8080"
 
   personInfo: LoggedPerson = {} as LoggedPerson;
 
