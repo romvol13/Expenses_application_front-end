@@ -10,8 +10,8 @@ import { Expense } from '../../model/expense';
 })
 export class ExpenseService {
 
-  //url: string = "http://3.79.98.250"
-  url: string = "http://localhost:8080"
+  url: string = "http://16.171.9.92"
+  //url: string = "http://localhost:8080"
 
   private addExpenseUrl = this.url + '/api/expense/add';
   private getMonthTotalUrl = this.url + '/api/expense/currentMonthTotal';
