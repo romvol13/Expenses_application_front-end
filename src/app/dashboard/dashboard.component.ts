@@ -173,11 +173,11 @@ export class DashboardComponent implements OnInit {
       console.log('Logged-in person details not available.');
       return;
     }
-
+  
     const observables: Observable<Expense[]>[] = this.categories.map(category =>
       this.getExpensesForCategory(category, loggedPerson.id)
     );
-
+  
     forkJoin(observables).subscribe(
       (expensesArrays: Expense[][]) => {
         this.dataPoints = expensesArrays.map((expenses: Expense[], index: number) => {
@@ -188,9 +188,10 @@ export class DashboardComponent implements OnInit {
             y: parseFloat(totalExpense.toFixed(2))
           };
         }).filter(dataPoint => dataPoint.y > 0);
-
+  
         this.dataPoints.sort((a, b) => a.y - b.y);
         this.updateChartOptions();
+        this.cdr.detectChanges();  // Ensure change detection occurs
       },
       error => console.error('Error updating chart data:', error)
     );

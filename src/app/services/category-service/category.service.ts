@@ -9,8 +9,8 @@ import { PersonDetailsService } from '../person-details-service/person-details.s
 })
 export class CategoryService {
 
-  url: string = "http://16.171.9.92"
-  //url: string = "http://localhost:8080"
+  //url: string = "http://16.171.9.92"
+  url: string = "http://localhost:8080"
 
   private categoriesUrl = this.url + '/api/expense/getAllCategories';
 

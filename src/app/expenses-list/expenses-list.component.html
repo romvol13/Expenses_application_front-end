@@ -8,6 +8,7 @@
             <table id="expensesTable" class="table table-striped" style="width:100%">
                 <thead id="tableContent">
                     <tr>
+                        <th>#</th> <!-- New index column -->
                         <th class="sortable-header" (click)="sortTable('price')">
                             Price, €
                             <span *ngIf="sortedColumn === 'price'"
@@ -28,39 +29,56 @@
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    <tr *ngFor="let expense of getPaginatedExpenses()">
+                    <tr *ngFor="let expense of getPaginatedExpenses(); let i = index">
+                        <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td> <!-- Index number -->
                         <td>{{ expense.price | number:'1.2-2' }}€</td>
                         <td>{{ expense.category }}</td>
                         <td class="d-none d-sm-table-cell">{{ expense.description }}</td>
                         <td class="d-none d-sm-table-cell">{{ expense.date | date:'yyyy-MM-dd' }}</td>
                         <td>
-                            <button class="btn btn-primary" (click)="editExpense(expense)">Edit</button>
-                            <button class="btn btn-danger" (click)="deleteExpense(expense.id)">Delete</button>
+                            <button type="button" class="btn btn-info" (click)="openInfoModal(expense)">INFO</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
 
             <!-- Pagination controls -->
-            <nav *ngIf="expenses.length > itemsPerPage">
-                <ul class="pagination">
-                    <li class="page-item" [class.disabled]="currentPage === 1">
-                        <button class="page-link" (click)="onPageChange(currentPage - 1)"
-                            [disabled]="currentPage === 1">Previous</button>
+            <nav *ngIf="getTotalPages() > 1" aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" [ngClass]="{'disabled': currentPage === 1}">
+                        <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
                     </li>
                     <li class="page-item" *ngFor="let page of getPageNumbers()">
-                        <button class="page-link" (click)="onPageChange(page)"
-                            [class.active-page]="currentPage === page">{{ page }}</button>
+                        <button class="page-link" (click)="onPageChange(page)" [ngClass]="{'active': currentPage === page}">{{ page }}</button>
                     </li>
-                    <li class="page-item" [class.disabled]="currentPage === getTotalPages()">
-                        <button class="page-link" (click)="onPageChange(currentPage + 1)"
-                            [disabled]="currentPage === getTotalPages()">Next</button>
+                    <li class="page-item" [ngClass]="{'disabled': currentPage === getTotalPages()}">
+                        <button class="page-link" (click)="nextPage()" [disabled]="currentPage === getTotalPages()">Next</button>
                     </li>
                 </ul>
             </nav>
         </div>
     </div>
 </main>
+
+<div class="modal" tabindex="-1" id="myModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Information</h5>
+        </div>
+        <div class="modal-body">
+            <p><strong>Price:</strong> {{ selectedExpense?.price | number:'1.2-2' }}€</p>
+            <p><strong>Category:</strong> {{ selectedExpense?.category }}</p>
+            <p><strong>Description:</strong> {{ selectedExpense?.description }}</p>
+            <p><strong>Date:</strong> {{ selectedExpense?.date | date:'yyyy-MM-dd' }}</p>
+          </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="closeButton" (click)="closeModal()">Close</button>
+          <button type="button" class="btn btn-danger" id="closeButton" (click)="deleteExpense()">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <footer>
     <app-footer></app-footer>

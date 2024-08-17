@@ -10,8 +10,8 @@ import { Expense } from '../../model/expense';
 })
 export class ExpenseService {
 
-  url: string = "http://16.171.9.92"
-  //url: string = "http://localhost:8080"
+  //url: string = "http://16.171.9.92"
+  url: string = "http://localhost:8080"
 
   private addExpenseUrl = this.url + '/api/expense/add';
   private getMonthTotalUrl = this.url + '/api/expense/currentMonthTotal';
@@ -65,7 +65,7 @@ export class ExpenseService {
     const token = this.personDetailsService.getToken();
 
     if (!token) {
-      const message = 'Token is not available';
+      const message = `Token is not available`;
       console.log(message);
       return of([]);
     }
@@ -74,12 +74,13 @@ export class ExpenseService {
 
     return this.http.get<Expense[]>(`${this.getExpensesByCategoryUrl}${category}/${personId}`, { headers }).pipe(
       catchError(error => {
-        const errorMessage = error.error?.message || 'Error fetching expenses by category, because expenses equals 0.';
-        console.error(errorMessage);
-        return of([]);
+        const errorMessage = error.error?.message || `Error fetching expenses for category: ${category}.`;
+        console.warn(errorMessage);  // Log the warning to the console
+        return of([]);  // Return an empty array in case of an error
       })
     );
   }
+
 
   getAllExpenses(personId: number): Observable<Expense[]> {
     const token = this.personDetailsService.getToken();
@@ -103,15 +104,15 @@ export class ExpenseService {
 
   deleteExpense(expenseId: number): Observable<void> {
     const token = this.personDetailsService.getToken();
-  
+
     if (!token) {
       console.log('Token is not available');
       return of();
     }
-  
+
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     const deleteExpenseUrl = `${this.url}/api/expense/delete/${expenseId}`;
-  
+
     return this.http.delete<void>(deleteExpenseUrl, { headers }).pipe(
       catchError(error => {
         const errorMessage = error.error?.message || 'Error deleting expense.';
@@ -120,5 +121,5 @@ export class ExpenseService {
       })
     );
   }
-  
+
 }

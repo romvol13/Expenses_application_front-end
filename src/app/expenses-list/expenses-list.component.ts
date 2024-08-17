@@ -9,13 +9,12 @@ import { Expense } from '../model/expense';
   styleUrls: ['./expenses-list.component.css']
 })
 export class ExpensesListComponent implements OnInit {
-
   expenses: Expense[] = [];
-  sortedColumn: string = 'price';
+  sortedColumn: string = 'date';
   isAscending: boolean = true;
-  showDetails: boolean = false;
   currentPage: number = 1;
-  itemsPerPage: number = 10;
+  itemsPerPage: number = 50;
+  selectedExpense: Expense | undefined; // For modal content
 
   constructor(
     private personDetailsService: PersonDetailsService,
@@ -40,34 +39,12 @@ export class ExpensesListComponent implements OnInit {
       .subscribe(
         expenses => {
           this.expenses = expenses;
-          this.sortTable(this.sortedColumn); // Initial sort after loading expenses
+          this.sortTable(this.sortedColumn);
         },
         error => {
           console.error('Error fetching expenses:', error);
         }
       );
-  }
-
-  editExpense(expense: Expense): void {
-    // Implement edit functionality
-  }
-
-  deleteExpense(expenseId: number | undefined): void {
-    if (!expenseId) {
-      console.error('Expense ID is undefined or null');
-      return;
-    }
-
-    if (confirm('Are you sure you want to delete this expense?')) {
-      this.expenseService.deleteExpense(expenseId).subscribe(
-        () => {
-          this.expenses = this.expenses.filter(expense => expense.id !== expenseId);
-        },
-        error => {
-          console.error('Error deleting expense:', error);
-        }
-      );
-    }
   }
 
   getLoggedPersonDetails() {
@@ -79,12 +56,10 @@ export class ExpensesListComponent implements OnInit {
       this.isAscending = !this.isAscending;
     } else {
       this.sortedColumn = columnName;
-      this.isAscending = true;
+      this.isAscending = false;
     }
 
-    // Perform sorting for the current page's expenses only
-    const paginatedExpenses = this.getPaginatedExpenses();
-    paginatedExpenses.sort((a, b) => {
+    this.expenses.sort((a, b) => {
       const aValue = this.getValueForSorting(a, columnName);
       const bValue = this.getValueForSorting(b, columnName);
 
@@ -92,37 +67,18 @@ export class ExpensesListComponent implements OnInit {
       if (bValue === null || bValue === undefined) return 1;
 
       if (columnName === 'date') {
-        const dateA = new Date(aValue);
-        const dateB = new Date(bValue);
-        return this.isAscending ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime();
+        return this.isAscending ? new Date(aValue).getTime() - new Date(bValue).getTime() : new Date(bValue).getTime() - new Date(aValue).getTime();
       } else if (columnName === 'category') {
-        // Use localeCompare for category sorting
         return this.isAscending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
       } else {
         return this.isAscending ? aValue - bValue : bValue - aValue;
       }
     });
-
-    // Update the displayed expenses after sorting
-    this.expenses.splice((this.currentPage - 1) * this.itemsPerPage, this.itemsPerPage, ...paginatedExpenses);
+    this.updatePagination(); // Apply pagination after sorting
   }
 
-
-  getValueForSorting(expense: Expense, columnName: string): any {
-    switch (columnName) {
-      case 'price':
-        return expense.price;
-      case 'category':
-        return expense.category;
-      case 'date':
-        return expense.date;
-      default:
-        return '';
-    }
-  }
-
-  onPageChange(pageNumber: number): void {
-    this.currentPage = pageNumber;
+  updatePagination(): void {
+    this.currentPage = 1; // Reset to the first page after sorting
   }
 
   getPaginatedExpenses(): Expense[] {
@@ -131,12 +87,79 @@ export class ExpensesListComponent implements OnInit {
     return this.expenses.slice(startIndex, endIndex);
   }
 
+  getValueForSorting(expense: Expense, columnName: string): any {
+    switch (columnName) {
+      case 'price': return expense.price;
+      case 'category': return expense.category;
+      case 'date': return expense.date;
+      default: return '';
+    }
+  }
+
+  onPageChange(pageNumber: number): void {
+    this.currentPage = pageNumber;
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.onPageChange(this.currentPage - 1);
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.getTotalPages()) {
+      this.onPageChange(this.currentPage + 1);
+    }
+  }
+
   getTotalPages(): number {
     return Math.ceil(this.expenses.length / this.itemsPerPage);
   }
 
   getPageNumbers(): number[] {
     const totalPages = this.getTotalPages();
-    return Array(totalPages).fill(0).map((x, i) => i + 1);
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  openInfoModal(expense: Expense): void {
+    this.selectedExpense = expense;
+    this.showModal();
+  }
+
+  deleteExpense(): void {
+    if (this.selectedExpense) {
+      const expenseId = this.selectedExpense.id;
+      if (expenseId) {
+        if (confirm('Are you sure you want to delete this expense?')) {
+          this.closeModal();
+          this.expenseService.deleteExpense(expenseId).subscribe(
+            () => {
+              this.expenses = this.expenses.filter(expense => expense.id !== expenseId);
+              this.updatePagination(); // Refresh the list after deletion
+              this.selectedExpense = undefined; // Clear the selected expense
+            },
+            error => {
+              console.error('Error deleting expense:', error);
+            }
+          );
+        }
+      } else {
+        console.error('Expense ID is undefined or null');
+      }
+    }
+  }
+
+  showModal(): void {
+    const modal = document.getElementById('myModal');
+    if (modal) {
+      modal.style.display = 'block';
+    }
+  }
+
+  closeModal(): void {
+    const modal = document.getElementById('myModal');
+    if (modal) {
+      modal.style.display = 'none'
+    };
   }
 }
